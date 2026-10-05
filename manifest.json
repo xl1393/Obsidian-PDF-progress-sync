@@ -1,10 +1,10 @@
 {
-  "id": "pdf-progress-sync",
-  "name": "PDF Progress Sync",
-  "version": "0.1.0",
-  "minAppVersion": "1.4.0",
-  "description": "Remember the last page of every PDF in the built-in viewer and resume it on any device that syncs the vault.",
-  "author": "Xu Li",
-  "authorUrl": "https://github.com/xl1393",
-  "isDesktopOnly": false
+	"id": "pdf-progress-sync",
+	"name": "PDF Progress Sync",
+	"version": "0.1.0",
+	"minAppVersion": "1.8.7",
+	"description": "Remember the last page of every PDF in the built-in viewer and resume it on any device that syncs the vault.",
+	"author": "Xu Li",
+	"authorUrl": "https://github.com/xl1393",
+	"isDesktopOnly": false
 }
