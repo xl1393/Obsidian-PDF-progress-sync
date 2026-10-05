@@ -10,7 +10,7 @@ It works with Obsidian's **built-in PDF viewer**. It does not replace the viewer
 
 - While you read, the current page is saved a moment after you turn pages.
 - When you open a PDF, it jumps to the most recent page recorded on **any** device.
-- Opening a PDF through a page link such as `[[book.pdf#page=12]]` keeps the link's page.
+- Opening a PDF through a page link such as `[[book.pdf#page=12]]` keeps the link's page, and is treated as a lookup: progress is only saved once you read on more than 3 pages past the link.
 - Each device writes only its own progress file under the plugin folder, and reads all of them. Two devices never write the same file, so file-sync tools (Syncthing, iCloud, Obsidian Sync, etc.) do not produce conflicts even when Obsidian is open on several devices at once.
 
 See [docs/DESIGN.md](docs/DESIGN.md) for details.

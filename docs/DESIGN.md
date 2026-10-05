@@ -48,6 +48,7 @@ Consequences:
 1. **Settling phase.** From file open until our restore is done, page changes are not recorded. Otherwise PDF.js's local restore (and the layout jitter) would be saved with a fresh timestamp and overwrite newer progress from another device.
 2. **Restore after `pagesloaded`, once layout settles** (a short delay), so it lands after PDF.js's own restore. If `pagesloaded` already fired when the plugin attaches (plugin loaded after the view), restore immediately. A fallback timer ends the settling phase if `pagesloaded` never comes.
 3. **Skip restore when `subpath` is set.**
+4. **Links are lookups.** A PDF opened through a link does not record progress until the reader has moved more than 3 pages forward from where the link landed. Glancing at a quoted page therefore never overwrites reading progress, while reading on from a link still gets saved.
 
 ## Storage: one file per device
 

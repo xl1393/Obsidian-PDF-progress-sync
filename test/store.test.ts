@@ -106,3 +106,13 @@ test("device file names", () => {
 	assert.equal(isDeviceFileName("win-abc123.json.tmp"), false);
 	assert.equal(isDeviceFileName("notes.txt"), false);
 });
+
+test("subpathPage reads both link forms", async () => {
+	const { subpathPage } = await import("../src/pdf");
+	assert.equal(subpathPage('[19,{"name":"FitBH"},null]'), 20);
+	assert.equal(subpathPage("[0,{\"name\":\"XYZ\"},10,700,null]"), 1);
+	assert.equal(subpathPage("#page=12"), 12);
+	assert.equal(subpathPage("#page=7&selection=1,2,3,4"), 7);
+	assert.equal(subpathPage("#Chapter 3"), null);
+	assert.equal(subpathPage(null), null);
+});

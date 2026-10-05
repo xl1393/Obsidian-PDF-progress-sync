@@ -116,3 +116,18 @@ export function getRequestedSubpath(view: PdfView): string | null {
 	const subpath = getObsidianViewer(view)?.subpath;
 	return typeof subpath === "string" && subpath.length > 0 ? subpath : null;
 }
+
+/**
+ * The 1-based page a requested subpath points to. Obsidian keeps a link's
+ * destination either as "#page=N…" or as a PDF.js destination array whose
+ * first element is the 0-based page index, such as `[19,{"name":"FitBH"},null]`.
+ */
+export function subpathPage(subpath: string | null): number | null {
+	if (!subpath) return null;
+	const hash = /[#&]page=(\d+)/.exec(subpath);
+	if (hash) return Number(hash[1]) || null;
+	const dest = /^\[\s*(\d+)\s*,/.exec(subpath);
+	if (dest) return Number(dest[1]) + 1;
+	return null;
+}
+
