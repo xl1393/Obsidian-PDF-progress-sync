@@ -1,0 +1,20 @@
+{
+  "name": "obsidian-pdf-progress-sync",
+  "version": "0.1.0",
+  "description": "Obsidian plugin: resume PDFs at the last page read, across devices, using the built-in PDF viewer.",
+  "main": "main.js",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && node esbuild.config.mjs production && node scripts/check-no-network.mjs",
+    "test": "node --test"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "obsidian": "1.13.1",
+    "typescript": "7.0.2"
+  }
+}
