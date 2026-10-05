@@ -9,7 +9,7 @@
     "dev": "node esbuild.config.mjs",
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit && node esbuild.config.mjs production && node scripts/check-no-network.mjs",
-    "test": "node --test"
+    "test": "node scripts/run-tests.mjs"
   },
   "license": "MIT",
   "devDependencies": {

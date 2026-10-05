@@ -27,6 +27,28 @@ All access to this chain lives in `src/pdf.ts`. If any link is missing (for exam
 - **Restore:** after `pagesloaded`, set `currentPageNumber`. The plugin must win against PDF.js's own per-device history, which also restores a page.
 - **Links win:** if the view was opened with a subpath such as `#page=12`, do not restore.
 
+## Observed event order (Windows, Obsidian 1.13.7)
+
+Measured with the stage 1 prototype. Times are from the moment the file is opened:
+
+| ~ms | event | notes |
+| --- | --- | --- |
+| 110 | `pagesinit`, `documentloaded` | page is 1 |
+| 120 | `pagechanging` 1 → N | PDF.js restores its own per-device history (localStorage `pdfjs.history`) |
+| 125 | `documentinit` | |
+| 260–400 | `pagesloaded` | all page sizes known |
+| +10 | `pagechanging` N ↔ N+1, several times | layout settling |
+
+- Opened through a link, PDF.js history is not applied; the viewer jumps straight to the link target, and `ObsidianViewer.subpath` holds the destination as a PDF.js dest array string such as `[19,{"name":"FitBH"},null]` (not `#page=20`). It stays set until another file is loaded in the same view.
+- Switching files inside one tab keeps the same event bus; only the loaded file changes.
+- Scanned (image-only) PDFs behave the same; page tracking does not need a text layer.
+
+Consequences:
+
+1. **Settling phase.** From file open until our restore is done, page changes are not recorded. Otherwise PDF.js's local restore (and the layout jitter) would be saved with a fresh timestamp and overwrite newer progress from another device.
+2. **Restore after `pagesloaded`, once layout settles** (a short delay), so it lands after PDF.js's own restore. If `pagesloaded` already fired when the plugin attaches (plugin loaded after the view), restore immediately. A fallback timer ends the settling phase if `pagesloaded` never comes.
+3. **Skip restore when `subpath` is set.**
+
 ## Storage: one file per device
 
 ```
@@ -48,7 +70,7 @@ All access to this chain lives in `src/pdf.ts`. If any link is missing (for exam
 - **Device ID:** generated once and kept in `app.saveLocalStorage`, which is per device and not part of the vault.
 - **Read:** on every PDF open, read all files in `progress/` and take the entry with the newest `ts` for that path. Reading from disk each time means progress synced from another device is picked up without restarting Obsidian.
 - **Why no conflicts:** a file only ever has one writer, so sync tools never see concurrent edits.
-- **Writes** go through `app.vault.adapter` (the plugin folder is not indexed by the vault) using write-to-temp-then-rename.
+- **Writes** go through `app.vault.adapter` (the plugin folder is not indexed by the vault). Sync tools deliver files atomically (temp file + rename), so readers never see a half-synced file; a file that fails to parse is ignored.
 - **Renames:** on `vault.on("rename")`, the newest entry for the old path is copied to the new path in this device's file.
 - **Clocks:** "newest wins" assumes device clocks are roughly right, which holds for personal devices.
 
